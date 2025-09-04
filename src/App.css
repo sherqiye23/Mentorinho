@@ -1,0 +1,17 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  background-color: transparent;
+  border: none;
+}
+
+.customContainer {
+  max-width: 1300px;
+  margin: 0 auto;
+  /* background-color: aqua; */
+}
