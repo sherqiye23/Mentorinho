@@ -1,9 +1,13 @@
+import { Helmet } from "react-helmet"
 import { ExplorePageComponent } from "../../../components/User/Explore components"
 
 export const ExplorePage = () => {
   return (
     <>
-        <ExplorePageComponent />
+      <Helmet>
+        <title>Explore - Mentorinho</title>
+      </Helmet>
+      <ExplorePageComponent />
     </>
   )
 }
