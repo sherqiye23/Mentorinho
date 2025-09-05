@@ -1,5 +1,9 @@
+import { QuizSetComponent } from "../../../components/User/Quizset components"
+
 export const QuizSetPage = () => {
   return (
-    <div>QuizSetPage</div>
+    <>
+      <QuizSetComponent />
+    </>
   )
 }

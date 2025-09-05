@@ -10,7 +10,7 @@ export const LoginPageComponent = () => {
     });
 
     return (
-        <div className="h-[100vh] flex justify-center items-center bg-[#ECEFF1]">
+        <div className="h-[93vh] flex justify-center items-center bg-[#ECEFF1]">
             <div className="w-full max-w-[400px] bg-white px-6 py-6 rounded shadow-lg">
                 {/* Logo */}
                 <div className="flex flex-col items-center mb-6">

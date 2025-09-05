@@ -1,6 +1,10 @@
+import { HomePageComponent } from "../../../components/User/Home components"
+
 const HomePage = () => {
   return (
-    <div>HomePage</div>
+    <>
+      <HomePageComponent />
+    </>
   )
 }
 

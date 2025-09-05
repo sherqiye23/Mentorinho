@@ -1,12 +1,15 @@
-import { Outlet } from 'react-router'
+import { Outlet, useLocation } from 'react-router'
+import { UserNavbar } from '../../components/User/Navbar'
+import { AuthNavbar } from '../../components/User/AuthNavbar';
 
 export default function UserLayout() {
+    const location = useLocation();
+    const showAuthNavbar = location.pathname === "/login" || location.pathname === "/signup";
+
     return (
         <>
-            {/* <ClientNavbar location={isSpecialPage} /> */}
+            {showAuthNavbar ? <AuthNavbar /> : <UserNavbar />}
             <Outlet />
-            {/* <ClientFooter /> */}
-            {/* <ScrollButton /> */}
         </>
     )
 }

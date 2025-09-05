@@ -1,4 +1,5 @@
 import { NotFoundPage } from "../pages/NotFound"
+import { ExplorePage } from "../pages/User/Explore"
 import HomePage from "../pages/User/Home"
 import LoginPage from "../pages/User/Login"
 import { QuizSetPage } from "../pages/User/QuizSet"
@@ -20,12 +21,12 @@ const ROUTES = [
                 element: <QuizSetPage />,
             },
             {
-                path: '/teacherpage',
-                element: <TeacherPage />,
+                path: '/explore',
+                element: <ExplorePage />,
             },
             {
-                path: '*',
-                element: <NotFoundPage />
+                path: '/teacherpage',
+                element: <TeacherPage />,
             },
             {
                 path: '/login',
@@ -36,7 +37,11 @@ const ROUTES = [
                 element: <SignupPage />
             }
         ]
-    }
+    },
+    {
+        path: '*',
+        element: <NotFoundPage />
+    },
 ]
 
 export default ROUTES
