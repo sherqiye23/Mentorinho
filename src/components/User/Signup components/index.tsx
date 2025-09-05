@@ -1,14 +1,21 @@
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import toast from "react-hot-toast";
-import { NavLink } from "react-router";
-
+import { NavLink, useNavigate } from "react-router";
+import axios, { AxiosError } from 'axios'
 
 export const SignupPageComponent = () => {
+    const navigate = useNavigate()
     const validationSchema = Yup.object().shape({
-        username: Yup.string()
+        userName: Yup.string()
             .min(3, "Username must be at least 3 characters")
             .required("Username is required"),
+        firstName: Yup.string()
+            .min(3, "Firstname must be at least 3 characters")
+            .required("Firstname is required"),
+        lastName: Yup.string()
+            .min(3, "Lastname must be at least 3 characters")
+            .required("Lastname is required"),
         password: Yup.string().trim()
             .required("Please enter your password")
             .matches(/^\S*$/, "No spaces are allowed")
@@ -30,21 +37,57 @@ export const SignupPageComponent = () => {
             <div className="w-full max-w-[400px] bg-white px-6 py-6 rounded shadow-lg">
                 {/* Logo */}
                 <div className="flex flex-col items-center mb-6">
-                    <div className="text-3xl font-bold text-[#FF9800]">⌘</div>
+                    <div>
+                        <img className="w-[100px] rounded-full" src={'./logorinho.jpg'} alt="" />
+                    </div>
                     <h1 className="text-xl font-semibold text-gray-800">Mentorinho</h1>
                 </div>
 
                 <Formik
                     initialValues={{
-                        username: "",
+                        userName: "",
+                        firstName: "",
+                        lastName: "",
                         password: "",
                         confirmPassword: "",
                         email: "",
+                        loginAfterRegister: false,
+                        acceptMail: false,
                     }}
                     validationSchema={validationSchema}
-                    onSubmit={(values, { setSubmitting, resetForm }) => {
-                        toast.success("You have successfully signed up 🎉");
-                        console.log(values);
+                    onSubmit={async (values, { setSubmitting, resetForm }) => {
+                        try {
+                            const response = await axios.post('https://azelebo4-001-site1.ltempurl.com/api/auth/register', {
+                                userName: values.userName,
+                                firstName: values.firstName,
+                                lastName: values.lastName,
+                                password: values.password,
+                                confirmPassword: values.confirmPassword,
+                                email: values.email,
+                                loginAfterRegister: values.loginAfterRegister,
+                                acceptMail: values.acceptMail,
+                            })
+                            if (response.data) {
+                                if (values.loginAfterRegister) {
+                                    localStorage.setItem("accessToken", response.data.accessToken);
+                                    localStorage.setItem("refreshToken", response.data.refreshToken);
+                                    navigate('/')
+                                } else {
+                                    navigate("/login")
+                                }
+                                toast.success("You have successfully signed up 🎉");
+                            }
+                        } catch (error: unknown) {
+                            const err = error as AxiosError<{ Message?: string }>;
+                            console.log(err);
+
+                            if (err.response?.data?.Message) {
+                                toast.error("❌ " + err.response.data.Message);
+                            } else {
+                                toast.error("Error");
+                            }
+                        }
+                        // console.log(values);
                         resetForm();
                         setSubmitting(false);
                     }}
@@ -55,12 +98,42 @@ export const SignupPageComponent = () => {
                             <div className="my-2">
                                 <Field
                                     type="text"
-                                    name="username"
+                                    name="userName"
                                     placeholder="Username"
                                     className="w-full border border-solid border-gray-400 rounded p-2"
                                 />
                                 <ErrorMessage
-                                    name="username"
+                                    name="userName"
+                                    component="div"
+                                    className="text-red-500 text-sm"
+                                />
+                            </div>
+
+                            {/* Firstname */}
+                            <div className="my-2">
+                                <Field
+                                    type="text"
+                                    name="firstName"
+                                    placeholder="Firstname"
+                                    className="w-full border border-solid border-gray-400 rounded p-2"
+                                />
+                                <ErrorMessage
+                                    name="firstName"
+                                    component="div"
+                                    className="text-red-500 text-sm"
+                                />
+                            </div>
+
+                            {/* Lastname */}
+                            <div className="my-2">
+                                <Field
+                                    type="text"
+                                    name="lastName"
+                                    placeholder="Lastname"
+                                    className="w-full border border-solid border-gray-400 rounded p-2"
+                                />
+                                <ErrorMessage
+                                    name="lastName"
                                     component="div"
                                     className="text-red-500 text-sm"
                                 />
@@ -109,6 +182,26 @@ export const SignupPageComponent = () => {
                                     component="div"
                                     className="text-red-500 text-sm"
                                 />
+                            </div>
+
+                            <div className="my-2 gap-1 flex items-center">
+                                <Field
+                                    type="checkbox"
+                                    name="loginAfterRegister"
+                                    id="loginAfterRegister"
+                                    className="border border-solid border-gray-400 rounded p-2"
+                                />
+                                <label htmlFor="loginAfterRegister">Login after register</label>
+                            </div>
+
+                            <div className="my-2 gap-1 flex items-center">
+                                <Field
+                                    type="checkbox"
+                                    name="acceptMail"
+                                    id="acceptMail"
+                                    className="border border-solid border-gray-400 rounded p-2"
+                                />
+                                <label htmlFor="acceptMail">Accept Mail</label>
                             </div>
 
                             {/* Button */}

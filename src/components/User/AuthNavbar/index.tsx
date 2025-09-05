@@ -6,7 +6,9 @@ export const AuthNavbar = () => {
       <div className="customContainer flex w-full justify-between items-center">
         <div className="flex items-center justify-center gap-3 text-gray-500">
           <NavLink to={'/'}>
-            <div className="text-3xl font-bold text-[#FF9800]">⌘</div>
+            <div>
+              <img className="w-[50px] rounded-full" src={'./logorinho.jpg'} alt="" />
+            </div>
           </NavLink>
           <NavLink to={'/explore'}>
             <div>Explore</div>

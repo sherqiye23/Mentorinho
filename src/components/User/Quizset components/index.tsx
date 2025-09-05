@@ -52,10 +52,10 @@ export const QuizSetComponent = () => {
     return (
         <div className="min-h-screen bg-[#1a1a1a] text-gray-100 p-6">
             <div className="max-w-4xl mx-auto">
-                <header className="flex items-center justify-between mb-6">
+                <header className="flex flex-col md:flex-row md:items-center justify-between mb-6">
                     <h1 className="text-2xl font-semibold">Problems</h1>
 
-                    <div className="flex items-center gap-3">
+                    <div className="flex md:items-center gap-3 flex-col md:flex-row">
                         <div className="relative">
                             <input
                                 value={query}
