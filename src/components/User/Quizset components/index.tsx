@@ -1,53 +1,71 @@
-import { useMemo, useState } from 'react'
+import axios from "axios";
+import { useEffect, useMemo, useState } from "react";
+
+export type TestType = {
+    id: string;
+    inputParametersJson: string;
+    expectedResultJson: string;
+    codingQuestionId: string;
+};
 
 export type Problem = {
-    id: number
-    title: string
-    acceptance: number // percent 0-100
-    difficulty: 'Easy' | 'Med.' | 'Hard'
-}
-
-const FAKE_PROBLEMS: Problem[] = [
-    { id: 1, title: 'Two Sum', acceptance: 56.2, difficulty: 'Easy' },
-    { id: 2, title: 'Add Two Numbers', acceptance: 46.8, difficulty: 'Med.' },
-    { id: 3, title: 'Longest Substring Without Repeating Characters', acceptance: 37.5, difficulty: 'Med.' },
-    { id: 4, title: 'Median of Two Sorted Arrays', acceptance: 44.6, difficulty: 'Hard' },
-    { id: 5, title: 'Longest Palindromic Substring', acceptance: 36.3, difficulty: 'Med.' },
-    { id: 6, title: 'Zigzag Conversion', acceptance: 52.2, difficulty: 'Med.' },
-    { id: 7, title: 'Reverse Integer', acceptance: 30.7, difficulty: 'Med.' },
-    { id: 8, title: 'String to Integer (atoi)', acceptance: 19.7, difficulty: 'Med.' },
-    { id: 9, title: 'Palindrome Number', acceptance: 59.6, difficulty: 'Easy' },
-    { id: 10, title: 'Regular Expression Matching', acceptance: 29.6, difficulty: 'Hard' },
-    { id: 11, title: 'Container With Most Water', acceptance: 58.2, difficulty: 'Med.' },
-    { id: 12, title: 'Integer to Roman', acceptance: 69.3, difficulty: 'Med.' },
-    { id: 13, title: 'Roman to Integer', acceptance: 65.4, difficulty: 'Easy' },
-    { id: 14, title: 'Longest Common Prefix', acceptance: 46.1, difficulty: 'Easy' },
-    { id: 15, title: '3Sum', acceptance: 27.6, difficulty: 'Med.' },
-    { id: 16, title: 'Find Closest Person', acceptance: 89.1, difficulty: 'Easy' },
-]
+    example: string;
+    codeTemplate: string;
+    tests: TestType[];
+    name: string;
+    text: string;
+    difficulty: string;
+    isPublic: boolean;
+    questionNumber: number;
+    id: string;
+    acceptance: number;
+    title: string;
+};
 
 export const QuizSetComponent = () => {
-    const [query, setQuery] = useState('')
-    const [filter, setFilter] = useState<'All' | 'Easy' | 'Med.' | 'Hard'>('All')
-    const [sortBy, setSortBy] = useState<'id' | 'acceptance' | 'title'>('id')
+    const [problems, setProblems] = useState<Problem[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [query, setQuery] = useState("");
+    const [filter, setFilter] = useState<"All" | "Easy" | "Med." | "Hard">("All");
+    const [sortBy, setSortBy] = useState<"id" | "acceptance" | "title">("id");
 
+    useEffect(() => {
+        const fetchProblems = async () => {
+            try {
+                const res = await axios.get<Problem[]>(
+                    "https://azelebo4-001-site1.ltempurl.com/api/codingquestion"
+                );
+                setProblems(res.data);
+            } catch (error) {
+                console.error("Error fetching problems:", error);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchProblems();
+    }, []);
 
     const filtered = useMemo(() => {
-        const q = query.trim().toLowerCase()
-        return FAKE_PROBLEMS.filter((p) => {
-            const matchesQuery =
-                q === '' ||
-                p.title.toLowerCase().startsWith(q) ||
-                String(p.id) === q
-            const matchesFilter = filter === 'All' || p.difficulty === filter
-            return matchesQuery && matchesFilter
-        }).sort((a, b) => {
-            if (sortBy === 'id') return a.id - b.id
-            if (sortBy === 'acceptance') return b.acceptance - a.acceptance
-            return a.title.localeCompare(b.title)
-        })
-    }, [query, filter, sortBy])
+        const q = query.trim().toLowerCase();
+        return problems
+            .filter((p) => {
+                const matchesQuery =
+                    q === "" ||
+                    p.title.toLowerCase().startsWith(q) ||
+                    String(p.id) === q;
+                const matchesFilter = filter === "All" || p.difficulty === filter;
+                return matchesQuery && matchesFilter;
+            })
+            .sort((a, b) => {
+                if (sortBy === "id") return Number(a.id) - Number(b.id);
+                if (sortBy === "acceptance") return b.acceptance - a.acceptance;
+                return a.title.localeCompare(b.title);
+            });
+    }, [problems, query, filter, sortBy]);
 
+    if (loading) {
+        return <div className="text-center py-10">Loading...</div>;
+    }
 
     return (
         <div className="min-h-screen bg-[#1a1a1a] text-gray-100 p-6">
@@ -70,7 +88,12 @@ export const QuizSetComponent = () => {
                                 viewBox="0 0 24 24"
                                 xmlns="http://www.w3.org/2000/svg"
                             >
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-4.35-4.35" />
+                                <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={2}
+                                    d="M21 21l-4.35-4.35"
+                                />
                                 <circle cx="11" cy="11" r="6" strokeWidth={2} />
                             </svg>
                         </div>
@@ -104,7 +127,9 @@ export const QuizSetComponent = () => {
                             key={p.id}
                             className="flex items-center gap-4 bg-[#282828] rounded-xl p-4 shadow-sm cursor-pointer"
                         >
-                            <div className="w-10 text-center text-sm text-gray-300 font-medium">{p.id}</div>
+                            <div className="w-10 text-center text-sm text-gray-300 font-medium">
+                                {p.name}
+                            </div>
 
                             <div className="flex-1">
                                 <div className="flex items-center justify-between">
@@ -113,38 +138,35 @@ export const QuizSetComponent = () => {
                                     </div>
 
                                     <div className="flex items-center gap-4">
-                                        <div className="text-sm text-gray-400">{p.acceptance.toFixed(1)}%</div>
-
-                                        <div className={`px-2 py-1 rounded-full text-xs font-semibold ${p.difficulty === 'Easy' ? 'bg-green-700 text-green-100' : p.difficulty === 'Med.' ? 'bg-yellow-700 text-yellow-100' : 'bg-red-700 text-red-100'
-                                            }`}>
-                                            {p.difficulty}
+                                        <div className="text-sm text-gray-400">
+                                            {p.acceptance?.toFixed(1) ?? "0"}%
                                         </div>
 
-                                        <button className="p-1 rounded hover:bg-gray-700/60">
-                                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" className="text-yellow-400">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
-                                            </svg>
-                                        </button>
+                                        <div
+                                            className={`px-2 py-1 rounded-full text-xs font-semibold ${p.difficulty === "Easy" || p.difficulty === "VeryEasy"
+                                                ? "bg-green-700 text-green-100"
+                                                : p.difficulty === "Med." ? "bg-yellow-700 text-yellow-100" : "bg-red-700 text-red-100"
+                                                }`}
+                                        >
+                                            {p.difficulty}
+                                        </div>
                                     </div>
                                 </div>
-
-                                {/* <div className="mt-2 h-2 bg-gray-700 rounded-full overflow-hidden">
-                                    <div
-                                        style={{ width: `${Math.max(4, p.acceptance)}%` }}
-                                        className="h-full bg-gradient-to-r from-gray-300 to-gray-100/40"
-                                    />
-                                </div> */}
                             </div>
                         </div>
                     ))}
 
                     {filtered.length === 0 && (
-                        <div className="text-center py-10 text-gray-400">No problems found.</div>
+                        <div className="text-center py-10 text-gray-400">
+                            No problems found.
+                        </div>
                     )}
                 </div>
 
-                <footer className="mt-8 text-sm text-gray-500">0/{FAKE_PROBLEMS.length} Solved</footer>
+                <footer className="mt-8 text-sm text-gray-500">
+                    0/{problems.length} Solved
+                </footer>
             </div>
         </div>
-    )
-}
+    );
+};
