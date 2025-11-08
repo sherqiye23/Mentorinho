@@ -1,15 +1,14 @@
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as yup from 'yup';
 import { Helmet } from 'react-helmet';
-import toast from 'react-hot-toast';
 
 type MyComponentsType = {
     setPage: React.Dispatch<React.SetStateAction<string>>;
-    emailState: string;
-    codeState: string;
+    // emailState: string;
+    // codeState: string;
 }
 
-export default function ConfirmNewPassword({ setPage, emailState, codeState }: MyComponentsType) {
+export default function ConfirmNewPassword({ setPage }: MyComponentsType) {
     const validationSchema = yup.object().shape({
         newPassword: yup.string().trim().required("Password is required"),
         confirmPassword: yup.string().trim().required("Password is required")
@@ -37,22 +36,22 @@ export default function ConfirmNewPassword({ setPage, emailState, codeState }: M
                         }}
                         validationSchema={validationSchema}
                         onSubmit={async (values, { setSubmitting, resetForm }) => {
-                            // try {
-                            //     const response = await resetPassword({ email: emailState, code: codeState, newPassword: values.password, confirmPassword: values.confirmPassword });
-                            //     console.log(values);
-                            //     console.log(response);
-                            //     if (response.data) {
-                            //         toast.success(response.data.message);
-                            //         setPage('login-page')
-                            //     } else {
-                            //         if (response.error) {
-                            //             toast.error(response.error.data.Message);
-                            //             return;
-                            //         }
-                            //     }
-                            // } catch (error) {
-                            //     console.error('Serverə qoşulmada xəta:', error);
-                            // }
+                            try {
+                                // const response = await resetPassword({ email: emailState, code: codeState, newPassword: values.password, confirmPassword: values.confirmPassword });
+                                // console.log(values);
+                                // console.log(response);
+                                // if (response.data) {
+                                //     toast.success(response.data.message);
+                                //     setPage('login-page')
+                                // } else {
+                                //     if (response.error) {
+                                //         toast.error(response.error.data.Message);
+                                //         return;
+                                //     }
+                                // }
+                            } catch (error) {
+                                console.error('Serverə qoşulmada xəta:', error);
+                            }
                             setPage('login-page')
                             console.log(values)
                             resetForm();

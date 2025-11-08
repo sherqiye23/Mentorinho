@@ -1,14 +1,13 @@
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as yup from 'yup';
 import { Helmet } from 'react-helmet';
-import toast from 'react-hot-toast';
 
 type MyComponentsType = {
     setPage: React.Dispatch<React.SetStateAction<string>>;
-    setEmailState: React.Dispatch<React.SetStateAction<string>>;
+    // setEmailState: React.Dispatch<React.SetStateAction<string>>;
 }
 
-export default function ForgotPassword({ setPage, setEmailState }: MyComponentsType) {
+export default function ForgotPassword({ setPage }: MyComponentsType) {
     const validationSchema = yup.object().shape({
         email: yup.string().email().required('E-mail is required'),
     });
